@@ -92,7 +92,6 @@ public class AudioSender implements Runnable {
 					//Read in data and add to vector for potential re-transmission
 					byte[] payload = recorder.getBlock();
 					voiceVector.add(payload);
-		
 
 					//PACKET CREATION
 					byte[] packetData = new byte[1 + payload.length];
@@ -102,18 +101,28 @@ public class AudioSender implements Runnable {
 					for (int r = 1; r < packetData.length; r++) {
 						packetData[r] = payload[r - 1];
 					}
-                                        
-                                        //checksum
-                                                        byte[] buffer = str.getBytes();
-                int thing = 0;
-                for(int i = 0; i < str.getBytes().length; i++){
-                    thing += Byte.hashCode(buffer[i]);
-                }
-                byte [] bytes = ByteBuffer.allocate(4).putInt(thing).array();
-                                        
-					//Make a DatagramPacket from it, with client address and port number
-					DatagramPacket packet = new DatagramPacket(packetData, packetData.length, clientIP, PORT);
+
+					//checksum
+					int thing = 0;
+					for (int i = 0; i < packetData.length; i++) {
+						Byte byteEqv = (Byte) packetData[i];
+						thing += byteEqv.hashCode();
+					}
+					byte[] bytes = ByteBuffer.allocate(4).putInt(thing).array();
 					
+					byte[] fullPacket = new byte[4 + packetData.length];
+					for(int i = 0; i < fullPacket.length; i++){
+						if(i < 4){
+							fullPacket[i] = bytes[i];
+						}
+						else{
+							fullPacket[i] = packetData[i-4];
+						}						
+					}
+					
+					//Make a DatagramPacket from it, with client address and port number
+					DatagramPacket packet = new DatagramPacket(fullPacket, fullPacket.length, clientIP, PORT);
+
 					//add to packet array
 					packets[burst] = packet;
 					burst++;
