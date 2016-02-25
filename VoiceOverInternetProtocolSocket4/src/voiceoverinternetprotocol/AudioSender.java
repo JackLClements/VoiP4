@@ -19,6 +19,7 @@ import java.nio.ByteBuffer;
 import java.util.Vector;
 import javax.sound.sampled.LineUnavailableException;
 import uk.ac.uea.cmp.voip.DatagramSocket2;
+import uk.ac.uea.cmp.voip.DatagramSocket4;
 
 /**
  *
@@ -27,7 +28,7 @@ import uk.ac.uea.cmp.voip.DatagramSocket2;
 public class AudioSender implements Runnable {
 
 	//static DatagramSocket sending_socket;
-	static DatagramSocket2 sending_socket;
+	static DatagramSocket4 sending_socket;
 	Vector<byte[]> voiceVector;
 	AudioRecorder recorder;
 	//AudioPlayer player;
@@ -65,7 +66,7 @@ public class AudioSender implements Runnable {
 		//We need the try and catch block to make sure no errors occur.
 		//DatagramSocket sending_socket;
 		try {
-			sending_socket = new DatagramSocket2();
+			sending_socket = new DatagramSocket4();
 		} catch (SocketException e) {
 			System.out.println("ERROR: Audio Sender: Could not open UDP socket to send from.");
 			e.printStackTrace();
