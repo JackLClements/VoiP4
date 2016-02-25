@@ -62,18 +62,31 @@ public class AudioReciever implements Runnable {
 		while (running) {
 			try {
 
-				byte[] recieve = new byte[513];
-				DatagramPacket packet = new DatagramPacket(recieve, 0, 513);
+				byte[] recieve = new byte[517];
+				DatagramPacket packet = new DatagramPacket(recieve, 0, 517);
 				//Add data to packet
 				receiving_socket.receive(packet);
 
 				//Unshuffle packet
-				byte header = recieve[0];
+				
+				//Get checksum
+				byte[] checksums = new byte[4];
+				for(int i = 0; i < 4; i++){
+					checksums[i] = recieve[i];
+				}
+				int checksum = java.nio.ByteBuffer.wrap(checksums).getInt();
+				
+				//Get Header
+				byte header = recieve[4]; //get header
+				
+				//Get Payload
 				byte[] payload = new byte[512];
 				for (int i = 1; i < recieve.length; i++) {
 					payload[i - 1] = recieve[i];
 				}
 				DatagramPacket packet2 = new DatagramPacket(payload, payload.length);
+				
+				//Re-calc checksum
 				
 				//Put packets in order via header
 				int orderedHeader;
