@@ -15,6 +15,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.util.Vector;
 import javax.sound.sampled.LineUnavailableException;
 import uk.ac.uea.cmp.voip.DatagramSocket2;
@@ -101,7 +102,15 @@ public class AudioSender implements Runnable {
 					for (int r = 1; r < packetData.length; r++) {
 						packetData[r] = payload[r - 1];
 					}
-
+                                        
+                                        //checksum
+                                                        byte[] buffer = str.getBytes();
+                int thing = 0;
+                for(int i = 0; i < str.getBytes().length; i++){
+                    thing += Byte.hashCode(buffer[i]);
+                }
+                byte [] bytes = ByteBuffer.allocate(4).putInt(thing).array();
+                                        
 					//Make a DatagramPacket from it, with client address and port number
 					DatagramPacket packet = new DatagramPacket(packetData, packetData.length, clientIP, PORT);
 					
