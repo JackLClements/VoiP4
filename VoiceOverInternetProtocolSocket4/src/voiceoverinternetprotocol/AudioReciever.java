@@ -81,13 +81,17 @@ public class AudioReciever implements Runnable {
 				
 				//Get Payload
 				byte[] payload = new byte[512];
-				for (int i = 1; i < recieve.length; i++) {
-					payload[i - 1] = recieve[i];
+				for (int i = 5; i < recieve.length; i++) {
+					payload[i - 5] = recieve[i];
 				}
 				DatagramPacket packet2 = new DatagramPacket(payload, payload.length);
 				
 				//Re-calc checksum
-				
+				int checksum2 = 0;
+				for (int i = 0; i < payload.length; i++) {
+						Byte byteEqv = (Byte) payload[i];
+						checksum2 += byteEqv.hashCode();
+				}
 				//Put packets in order via header
 				int orderedHeader;
 				int correctHeader = (int) header;
@@ -96,9 +100,16 @@ public class AudioReciever implements Runnable {
 				} else {
 					orderedHeader = correctHeader;
 				}
-				orderedPackets[orderedHeader] = packet2;
+				System.out.println(checksum);
+				System.out.println(checksum2);
+				if(checksum != checksum2){
+					orderedPackets[orderedHeader] = packet2;
+				}				
 				if(burst >= 255){
+					player.playBlock(orderedPackets[0].getData());
+					/*
 					for(int i = 0; i < 255; i++){
+						System.out.println("THING" + i);
 						if(orderedPackets[i] == null){
 							player.playBlock(orderedPackets[lastWorkingPacket].getData());
 						}
@@ -107,7 +118,7 @@ public class AudioReciever implements Runnable {
 							lastWorkingPacket = i;
 						}
 						
-					}
+					}*/
 					//Arrays.fill(orderedPackets, null);
 				}
 				burst++;

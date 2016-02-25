@@ -104,7 +104,7 @@ public class AudioSender implements Runnable {
 
 					//checksum
 					int thing = 0;
-					for (int i = 0; i < packetData.length; i++) {
+					for (int i = 1; i < packetData.length; i++) {
 						Byte byteEqv = (Byte) packetData[i];
 						thing += byteEqv.hashCode();
 					}
